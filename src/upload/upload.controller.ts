@@ -24,14 +24,17 @@ export class UploadController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  uploadFile(@UploadedFile() file: Express.Multer.File, @Request() req) {
     if (!file) {
       return { error: 'No file uploaded' };
     }
-    // Return the URL to access the file
-    // In production, this should include domain/port or be stored in cloud
+    // Dynamic URL construction (works on Localhost and Render)
+    const protocol = req.protocol;
+    const host = req.get('host');
+    const fullUrl = `${protocol}://${host}/upload/files/${file.filename}`;
+
     return {
-      url: `http://localhost:3000/upload/files/${file.filename}`,
+      url: fullUrl,
       filename: file.filename,
     };
   }

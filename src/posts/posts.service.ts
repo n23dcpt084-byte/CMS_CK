@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Post, PostDocument } from './schemas/post.schema';
@@ -59,5 +60,32 @@ export class PostsService {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
     return result;
+  }
+
+  // 🟢 CRON JOB: Check every minute for scheduled posts
+  @Cron(CronExpression.EVERY_MINUTE)
+  async handleScheduledPosts() {
+    const now = new Date();
+    this.logger.debug(`Checking scheduled posts at ${now.toISOString()}...`);
+
+    // Find posts that are 'scheduled' AND publishedAt <= now
+    const duePosts = await this.postModel.find({
+      status: 'scheduled',
+      publishedAt: { $lte: now },
+    }).exec();
+
+    if (duePosts.length > 0) {
+      this.logger.log(`Found ${duePosts.length} posts due for publishing.`);
+
+      for (const post of duePosts) {
+        post.status = 'published';
+        // Keep publishedAt as the scheduled time, or update to exact now? 
+        // Keeping it as scheduled time is usually better for "intended" publish time, 
+        // but updating to 'now' might be safer for sort order. 
+        // Let's keep it as is, just flip status.
+        await post.save();
+        this.logger.log(`Published post: "${post.title}" (ID: ${post._id})`);
+      }
+    }
   }
 }

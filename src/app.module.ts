@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 import { UploadModule } from './upload/upload.module';
@@ -31,6 +32,9 @@ import { UploadModule } from './upload/upload.module';
       }),
       inject: [ConfigService],
     }),
+
+    // ScheduleModule: Enables scheduling capabilities (e.g., cron jobs).
+    ScheduleModule.forRoot(),
 
     // Feature Modules: Importing the specific business logic modules
     AuthModule,   // Handles Admin Authentication (Login, JWT)

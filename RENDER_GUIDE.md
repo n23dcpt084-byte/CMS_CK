@@ -35,7 +35,20 @@ We need a database that is accessible from the internet, not just `localhost`.
 
 ---
 
-## 🟢 Part 2: Render.com Setup (Server)
+## 🟢 Part 2: Cloudinary Setup (Image Storage)
+We use Cloudinary to store images because Render deletes local files after restarts.
+
+1.  **Sign Up:** Go to [Cloudinary](https://cloudinary.com/) and create a free account.
+2.  **Dashboard:** Look at the "Account Details" on the Dashboard.
+3.  **Get Credentials:**
+    *   Start copying:
+    *   `Cloud Name`
+    *   `API Key`
+    *   `API Secret`
+
+---
+
+## 🟢 Part 3: Render.com Setup (Server)
 Now we upload your code to Render.
 
 1.  **Push Code to GitHub:**
@@ -55,33 +68,35 @@ Now we upload your code to Render.
 4.  **Environment Variables (Important!):**
     *   Scroll down to **Environment Variables**.
     *   Click **Add Environment Variable** for each:
-        *   Key: `MONGO_URI` | Value: (Paste your MongoDB Connection String from Part 1)
-        *   Key: `JWT_SECRET` | Value: `supersecuresecretkey` (or any long string)
+        *   `MONGO_URI` : (Your MongoDB Connection String)
+        *   `JWT_SECRET` : `supersecuresecretkey`
+        *   `CLOUDINARY_CLOUD_NAME` : (From Cloudinary Dashboard)
+        *   `CLOUDINARY_API_KEY` : (From Cloudinary Dashboard)
+        *   `CLOUDINARY_API_SECRET` : (From Cloudinary Dashboard)
 5.  **Deploy:**
     *   Click **Create Web Service**.
 
 ---
 
-## 🟢 Part 3: Verification
+## 🟢 Part 4: Verification
 Render will start building your app. Watch the logs.
 
 1.  **Wait for:** `Nest application successfully started` in the logs.
 2.  **Get URL:** Look for your deployed URL at the top (e.g., `https://cms-backend-xv32.onrender.com`).
 3.  **Test:**
     *   Open Postman.
-    *   Replace `http://localhost:3000` with your **new Render URL**.
-    *   Try to **Login** (`POST /auth/login`).
-    *   If you get a token, **IT WORKS!** 🎉
+    *   Relogin to get a token.
+    *   Try to **Upload Image**. It should return a Cloudinary URL (`https://res.cloudinary.com/...`).
 
 ---
 
 ## ❓ Common Errors & Fixes
 
-**Error: "MongoTimeoutError: Server selection timed out"**
-*   **Fix:** Did you do Part 1 Step 4? Allow Access From Anywhere (`0.0.0.0/0`) in MongoDB Network Access is mandatory.
+**Error: "Cloudinary Upload Error"**
+*   **Fix:** Check `CLOUDINARY_...` env vars in Render. Are they correct?
 
-**Error: "Authentication Failed"**
-*   **Fix:** Check your `MONGO_URI` in Render. Did you replace `<password>` with the real password? Did you remove the `< >` brackets?
+**Error: "MongoTimeoutError"**
+*   **Fix:** Check MongoDB Network Access (`0.0.0.0/0`).
 
 **Error: "App crashes immediately"**
-*   **Fix:** Check Environment Variables. Make sure `JWT_SECRET` is set. Check logs for details.
+*   **Fix:** Check `JWT_SECRET` and other env vars are present.

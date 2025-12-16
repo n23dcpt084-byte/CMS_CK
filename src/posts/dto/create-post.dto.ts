@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsEnum, IsDateString } from 'class-validator';
 
 export class CreatePostDto {
     @IsNotEmpty()
@@ -10,6 +10,14 @@ export class CreatePostDto {
     @IsOptional()
     @IsString()
     imageUrl?: string;
+
+    @IsOptional()
+    @IsEnum(['draft', 'scheduled', 'published'])
+    status?: string;
+
+    @IsOptional()
+    @IsDateString()
+    publishedAt?: Date;
 }
 
 export class UpdatePostDto {
@@ -21,4 +29,12 @@ export class UpdatePostDto {
 
     @IsOptional()
     imageUrl?: string;
+
+    @IsOptional()
+    @IsEnum(['draft', 'scheduled', 'published'])
+    status?: string;
+
+    @IsOptional()
+    @IsDateString()
+    publishedAt?: Date;
 }

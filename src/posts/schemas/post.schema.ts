@@ -17,6 +17,12 @@ export class Post {
     // Simplified: Author is just a string (e.g. "Admin") for this project scope
     @Prop({ default: 'Admin' })
     author: string;
+
+    @Prop({ default: 'draft', enum: ['draft', 'scheduled', 'published'] })
+    status: string;
+
+    @Prop({ type: Date, default: null })
+    publishedAt: Date;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

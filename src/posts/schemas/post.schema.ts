@@ -45,6 +45,9 @@ export class Post {
     @Prop({ enum: ['original', 'facebook', 'youtube', 'tiktok', 'googledrive'], default: 'original' })
     sourceType: string;
 
+    @Prop({ default: '16:9' })
+    mediaRatio: string;
+
     @Prop()
     sourceUrl: string;
 

@@ -24,6 +24,10 @@ export class CreatePostDto {
     sourceType?: 'original' | 'facebook' | 'youtube' | 'tiktok' | 'googledrive';
 
     @IsOptional()
+    @IsString() // '16:9', '4:3', '1:1', '9:16'
+    mediaRatio?: string;
+
+    @IsOptional()
     @IsString()
     sourceUrl?: string;
 

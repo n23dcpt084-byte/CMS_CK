@@ -5,6 +5,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 import { UploadModule } from './upload/upload.module';
+import { ShortsModule } from './shorts/shorts.module';
 
 /**
  * AppModule
@@ -40,6 +41,7 @@ import { UploadModule } from './upload/upload.module';
     AuthModule,   // Handles Admin Authentication (Login, JWT)
     PostsModule,  // Handles Blog Posts (CRUD)
     UploadModule, // Handles Image Uploads
+    ShortsModule, // Handles Short Videos
   ],
 })
 export class AppModule { }

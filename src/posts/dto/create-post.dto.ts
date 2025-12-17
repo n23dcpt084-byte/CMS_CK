@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsEnum, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsEnum, IsDateString, IsObject } from 'class-validator';
 
 export class CreatePostDto {
     @IsNotEmpty()
@@ -9,10 +9,26 @@ export class CreatePostDto {
 
     @IsOptional()
     @IsString()
+    slug?: string;
+
+    @IsOptional()
+    @IsString()
     imageUrl?: string;
 
     @IsOptional()
-    @IsEnum(['draft', 'scheduled', 'published', 'archived']) // 🟢 Added 'archived'
+    @IsString()
+    thumbnailUrl?: string;
+
+    @IsOptional()
+    @IsEnum(['original', 'facebook', 'youtube', 'tiktok'])
+    sourceType?: 'original' | 'facebook' | 'youtube' | 'tiktok';
+
+    @IsOptional()
+    @IsString()
+    sourceUrl?: string;
+
+    @IsOptional()
+    @IsEnum(['draft', 'scheduled', 'published', 'archived'])
     status?: string;
 
     @IsOptional()
@@ -20,11 +36,28 @@ export class CreatePostDto {
     publishedAt?: Date;
 
     @IsOptional()
+    @IsObject()
     seo?: {
         title?: string;
         description?: string;
         keywords?: string;
     };
+
+    @IsOptional()
+    @IsObject()
+    channels?: {
+        web?: boolean;
+        facebook?: boolean;
+        tiktok?: boolean;
+        youtube?: boolean;
+    };
+
+    @IsOptional()
+    embeds?: {
+        platform: string;
+        url: string;
+        embedUrl: string;
+    }[];
 }
 
 export class UpdatePostDto {
@@ -35,10 +68,27 @@ export class UpdatePostDto {
     content?: string;
 
     @IsOptional()
+    @IsString()
+    slug?: string;
+
+    @IsOptional()
+    @IsString()
     imageUrl?: string;
 
     @IsOptional()
-    @IsEnum(['draft', 'scheduled', 'published', 'archived']) // 🟢 Added 'archived'
+    @IsString()
+    thumbnailUrl?: string;
+
+    @IsOptional()
+    @IsEnum(['original', 'facebook', 'youtube', 'tiktok'])
+    sourceType?: 'original' | 'facebook' | 'youtube' | 'tiktok';
+
+    @IsOptional()
+    @IsString()
+    sourceUrl?: string;
+
+    @IsOptional()
+    @IsEnum(['draft', 'scheduled', 'published', 'archived'])
     status?: string;
 
     @IsOptional()
@@ -46,9 +96,26 @@ export class UpdatePostDto {
     publishedAt?: Date;
 
     @IsOptional()
+    @IsObject()
     seo?: {
         title?: string;
         description?: string;
         keywords?: string;
     };
+
+    @IsOptional()
+    @IsObject()
+    channels?: {
+        web?: boolean;
+        facebook?: boolean;
+        tiktok?: boolean;
+        youtube?: boolean;
+    };
+
+    @IsOptional()
+    embeds?: {
+        platform: string;
+        url: string;
+        embedUrl: string;
+    }[];
 }

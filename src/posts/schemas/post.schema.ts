@@ -37,6 +37,17 @@ export class Post {
     };
 
     // 🟢 MULTI-PLATFORM EMBEDS
+    // 🟢 SLUG (URL Friendly ID)
+    @Prop({ unique: true, sparse: true })
+    slug: string;
+
+    // 🟢 SOURCE ORIGIN (Enterprise Content Sourcing)
+    @Prop({ enum: ['original', 'facebook', 'youtube', 'tiktok'], default: 'original' })
+    sourceType: string;
+
+    @Prop()
+    sourceUrl: string;
+
     @Prop({ type: [{ platform: String, url: String, embedUrl: String }], default: [] })
     embeds: {
         platform: string;

@@ -10,11 +10,33 @@ export class PostsService {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) { }
 
   async create(createPostDto: CreatePostDto): Promise<Post> {
+    // 🟢 GENERATE SLUG IF MISSING
+    if (!createPostDto.slug) {
+      createPostDto.slug = this.generateSlug(createPostDto.title);
+    } else {
+      createPostDto.slug = this.generateSlug(createPostDto.slug);
+    }
+    // TODO: Check uniqueness loop if needed, but for now rely on Mongoose unique index or simple appending
+
+    // Ensure uniqueness basic check
+    const existing = await this.postModel.findOne({ slug: createPostDto.slug }).exec();
+    if (existing) {
+      createPostDto.slug = `${createPostDto.slug}-${Date.now()}`;
+    }
+
     const newPost = new this.postModel({
       ...createPostDto,
       author: 'Admin', // Hardcoded for simplified scope
     });
     return newPost.save();
+  }
+
+  private generateSlug(text: string): string {
+    return text.toString().toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')           // Replace spaces with -
+      .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+      .replace(/\-\-+/g, '-');        // Replace multiple - with single -
   }
 
   async findAll(): Promise<Post[]> {
@@ -33,6 +55,15 @@ export class PostsService {
 
   async update(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
     try {
+      if (updatePostDto.title && !updatePostDto.slug) {
+        // Optionally update slug if title changes and no slug provided? 
+        // For stability, we usually don't change slug automatically on update unless requested.
+        // But if slug IS provided, sanitize it.
+      }
+      if (updatePostDto.slug) {
+        updatePostDto.slug = this.generateSlug(updatePostDto.slug);
+      }
+
       const updatedPost = await this.postModel
         .findByIdAndUpdate(id, updatePostDto, { new: true })
         .exec();
@@ -74,19 +105,34 @@ export class PostsService {
   async findPublicOne(id: string): Promise<Post> {
     try {
       // 🟢 Increment View Count atomically and get updated doc
-      const post = await this.postModel.findOneAndUpdate(
+      // Try finding by ID first
+      let post = await this.postModel.findOneAndUpdate(
         { _id: id, status: 'published' },
         { $inc: { viewCount: 1 } },
         { new: true }
       ).exec();
 
       if (!post) {
-        throw new NotFoundException(`Post not found or not visible.`);
+        throw new NotFoundException(`Post not found.`);
       }
       return post;
     } catch (error) {
       throw new NotFoundException(`Post not found.`);
     }
+  }
+
+  // 🟢 NEW: FIND BY SLUG
+  async findBySlug(slug: string): Promise<Post> {
+    const post = await this.postModel.findOneAndUpdate(
+      { slug: slug, status: 'published' },
+      { $inc: { viewCount: 1 } },
+      { new: true }
+    ).exec();
+
+    if (!post) {
+      throw new NotFoundException(`Post not found.`);
+    }
+    return post;
   }
 
   // 🟢 CRON JOB: Check every minute for scheduled posts

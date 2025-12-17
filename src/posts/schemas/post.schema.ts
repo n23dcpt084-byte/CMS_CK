@@ -35,6 +35,14 @@ export class Post {
         description?: string;
         keywords?: string;
     };
+
+    // 🟢 MULTI-PLATFORM EMBEDS
+    @Prop({ type: [{ platform: String, url: String, embedUrl: String }], default: [] })
+    embeds: {
+        platform: string;
+        url: string;
+        embedUrl: string;
+    }[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

@@ -30,7 +30,20 @@ export class PostsController {
 
     @Get('public/:id')
     findPublicOne(@Param('id') id: string) {
-        return this.postsService.findPublicOne(id);
+        // Fallback or ID fetch
+        // If it looks like ID, use ID. Else try slug?
+        // Better to separate, but for compatibility let's keep check.
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            return this.postsService.findPublicOne(id);
+        } else {
+            return this.postsService.findBySlug(id);
+        }
+    }
+
+    // 🟢 SPECIFIC SLUG ROUTE
+    @Get('public/slug/:slug')
+    findBySlug(@Param('slug') slug: string) {
+        return this.postsService.findBySlug(slug);
     }
 
     @Get()

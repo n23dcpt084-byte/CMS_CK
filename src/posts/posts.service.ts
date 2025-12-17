@@ -62,6 +62,27 @@ export class PostsService {
     return result;
   }
 
+  // 🟢 PUBLIC API METHODS
+  async findPublic(): Promise<Post[]> {
+    return this.postModel
+      .find({ status: 'published' })
+      .select('title imageUrl content publishedAt createdAt author') // Select necessary fields
+      .sort({ publishedAt: -1 })
+      .exec();
+  }
+
+  async findPublicOne(id: string): Promise<Post> {
+    try {
+      const post = await this.postModel.findOne({ _id: id, status: 'published' }).exec();
+      if (!post) {
+        throw new NotFoundException(`Post not found or not visible.`);
+      }
+      return post;
+    } catch (error) {
+      throw new NotFoundException(`Post not found.`);
+    }
+  }
+
   // 🟢 CRON JOB: Check every minute for scheduled posts
   @Cron(CronExpression.EVERY_MINUTE)
   async handleScheduledPosts() {

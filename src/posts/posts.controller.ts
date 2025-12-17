@@ -22,6 +22,17 @@ export class PostsController {
         return this.postsService.create(createPostDto);
     }
 
+    // 🟢 PUBLIC ENDPOINTS
+    @Get('public')
+    findPublic() {
+        return this.postsService.findPublic();
+    }
+
+    @Get('public/:id')
+    findPublicOne(@Param('id') id: string) {
+        return this.postsService.findPublicOne(id);
+    }
+
     @Get()
     findAll() {
         return this.postsService.findAll();

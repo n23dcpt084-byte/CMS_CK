@@ -18,6 +18,13 @@ export class CreatePostDto {
     @IsOptional()
     @IsDateString()
     publishedAt?: Date;
+
+    @IsOptional()
+    seo?: {
+        title?: string;
+        description?: string;
+        keywords?: string;
+    };
 }
 
 export class UpdatePostDto {
@@ -37,4 +44,11 @@ export class UpdatePostDto {
     @IsOptional()
     @IsDateString()
     publishedAt?: Date;
+
+    @IsOptional()
+    seo?: {
+        title?: string;
+        description?: string;
+        keywords?: string;
+    };
 }

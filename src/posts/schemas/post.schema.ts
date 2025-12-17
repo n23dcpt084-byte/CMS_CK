@@ -23,6 +23,18 @@ export class Post {
 
     @Prop({ type: Date, default: null })
     publishedAt: Date;
+
+    // 🟢 ANALYTICS
+    @Prop({ default: 0 })
+    viewCount: number;
+
+    // 🟢 SEO METADATA
+    @Prop({ type: Object, default: {} })
+    seo: {
+        title?: string;
+        description?: string;
+        keywords?: string;
+    };
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

@@ -66,14 +66,20 @@ export class PostsService {
   async findPublic(): Promise<Post[]> {
     return this.postModel
       .find({ status: 'published' })
-      .select('title imageUrl content publishedAt createdAt author') // Select necessary fields
+      .select('title imageUrl content publishedAt createdAt author viewCount') // Select necessary fields
       .sort({ publishedAt: -1 })
       .exec();
   }
 
   async findPublicOne(id: string): Promise<Post> {
     try {
-      const post = await this.postModel.findOne({ _id: id, status: 'published' }).exec();
+      // 🟢 Increment View Count atomically and get updated doc
+      const post = await this.postModel.findOneAndUpdate(
+        { _id: id, status: 'published' },
+        { $inc: { viewCount: 1 } },
+        { new: true }
+      ).exec();
+
       if (!post) {
         throw new NotFoundException(`Post not found or not visible.`);
       }

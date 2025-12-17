@@ -18,7 +18,7 @@ export class Post {
     @Prop({ default: 'Admin' })
     author: string;
 
-    @Prop({ default: 'draft', enum: ['draft', 'scheduled', 'published'] })
+    @Prop({ default: 'draft', enum: ['draft', 'scheduled', 'published', 'archived'] }) // 🟢 Added 'archived'
     status: string;
 
     @Prop({ type: Date, default: null })

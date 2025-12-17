@@ -12,7 +12,7 @@ export class CreatePostDto {
     imageUrl?: string;
 
     @IsOptional()
-    @IsEnum(['draft', 'scheduled', 'published'])
+    @IsEnum(['draft', 'scheduled', 'published', 'archived']) // 🟢 Added 'archived'
     status?: string;
 
     @IsOptional()
@@ -31,7 +31,7 @@ export class UpdatePostDto {
     imageUrl?: string;
 
     @IsOptional()
-    @IsEnum(['draft', 'scheduled', 'published'])
+    @IsEnum(['draft', 'scheduled', 'published', 'archived']) // 🟢 Added 'archived'
     status?: string;
 
     @IsOptional()

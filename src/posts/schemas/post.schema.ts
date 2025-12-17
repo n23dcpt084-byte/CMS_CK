@@ -42,7 +42,7 @@ export class Post {
     slug: string;
 
     // 🟢 SOURCE ORIGIN (Enterprise Content Sourcing)
-    @Prop({ enum: ['original', 'facebook', 'youtube', 'tiktok'], default: 'original' })
+    @Prop({ enum: ['original', 'facebook', 'youtube', 'tiktok', 'googledrive'], default: 'original' })
     sourceType: string;
 
     @Prop()

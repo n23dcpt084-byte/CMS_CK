@@ -20,8 +20,8 @@ export class CreatePostDto {
     thumbnailUrl?: string;
 
     @IsOptional()
-    @IsEnum(['original', 'facebook', 'youtube', 'tiktok'])
-    sourceType?: 'original' | 'facebook' | 'youtube' | 'tiktok';
+    @IsEnum(['original', 'facebook', 'youtube', 'tiktok', 'googledrive'])
+    sourceType?: 'original' | 'facebook' | 'youtube' | 'tiktok' | 'googledrive';
 
     @IsOptional()
     @IsString()

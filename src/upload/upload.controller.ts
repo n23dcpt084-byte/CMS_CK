@@ -38,20 +38,42 @@ export class UploadController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File, @Request() req) {
     if (!file) {
-      return { error: 'No file uploaded' };
+      console.error('❌ No file uploaded');
+      throw new InternalServerErrorException('No file uploaded');
     }
 
-    // Explicitly reject if credentials are bad to prevent 500 loop
+    // Explicitly reject if credentials are bad
     if (!process.env.CLOUDINARY_CLOUD_NAME) {
       throw new InternalServerErrorException('Server Misconfiguration: Missing Cloudinary Credentials');
+    }
+
+    // 🟢 DETECT FILE TYPE
+    const mimeType = file.mimetype;
+    let resourceType: 'image' | 'video' | 'auto' = 'image'; // Default
+
+    if (mimeType.startsWith('video/')) {
+      resourceType = 'video';
+      console.log(`🎥 Uploading Video: ${file.originalname}`);
+    } else if (mimeType.startsWith('image/')) {
+      resourceType = 'image';
+      console.log(`🖼️ Uploading Image: ${file.originalname}`);
+    } else {
+      console.warn(`⚠️ Unsupported MimeType: ${mimeType}`);
+      throw new InternalServerErrorException('Unsupported file type. Only Images and Videos are allowed.');
     }
 
     try {
       const result = await new Promise<CloudinaryResponse>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'cms_uploads' },
+          {
+            folder: 'cms_uploads',
+            resource_type: resourceType, // 🟢 CRITICAL: 'video' or 'image'
+          },
           (error, result) => {
-            if (error) return reject(error);
+            if (error) {
+              console.error('Cloudinary Callback Error:', error);
+              return reject(error);
+            }
             if (!result) return reject(new Error('Cloudinary upload returned undefined'));
             resolve(result);
           },
@@ -59,13 +81,17 @@ export class UploadController {
         Readable.from(file.buffer).pipe(uploadStream);
       });
 
+      console.log(`✅ Upload Success: ${result.secure_url}`);
+
       return {
         url: result.secure_url,
         filename: result.public_id,
+        resource_type: result.resource_type,
+        original_filename: result.original_filename
       };
     } catch (error) {
-      console.error('Cloudinary Upload Error:', error);
-      throw new InternalServerErrorException('Image Upload Failed');
+      console.error('❌ Cloudinary Upload Error Details:', error);
+      throw new InternalServerErrorException('Upload Failed: ' + (error.message || 'Unknown Error'));
     }
   }
 }

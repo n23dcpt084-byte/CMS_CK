@@ -9,7 +9,10 @@ export class Short {
     caption: string;
 
     @Prop({ required: true })
-    videoUrl: string;
+    mediaUrl: string;
+
+    @Prop({ enum: ['video', 'image'], default: 'video' })
+    mediaType: string;
 
     @Prop({ enum: ['upload', 'youtube', 'tiktok', 'facebook'], default: 'upload' })
     platform: string;
